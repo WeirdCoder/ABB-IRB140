@@ -1,0 +1,15 @@
+// Note: this file was automatically generated using the
+// CoordinateFrame.generateLCMType() method.
+package abblcm;
+struct abb_irb140pos
+{
+  int64_t timestamp;
+
+  double Joint1;
+  double Joint2;
+  double Joint3;
+  double Joint4;
+  double Joint5;
+  double Joint6;
+}
+
