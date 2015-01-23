@@ -5,11 +5,6 @@ struct abb_irb140pos
 {
   int64_t timestamp;
 
-  double Joint1;
-  double Joint2;
-  double Joint3;
-  double Joint4;
-  double Joint5;
-  double Joint6;
+  double Joints[6];
 }
 

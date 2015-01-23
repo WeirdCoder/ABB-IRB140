@@ -22,17 +22,12 @@ def convertLCM_Matlab(x):
     msg = abb_irb140pos()
     msg.timestamp =  time.time()
     
-    msg.Joint1 = x[0]
-    msg.Joint2 = x[1]
-    msg.Joint3 = x[2]
-    msg.Joint4 = x[3]
-    msg.Joint5 = x[4]
-    msg.Joint6 = x[5]
+    msg.Joints = x
 
     return msg
 
 def convertACH_Command(msg):
-    return [msg.Joint1,msg.Joint2,msg.Joint3,msg.Joint4,msg.Joint5,msg.Joint6]
+    return msg.Joints
 
 class abbIRB140LCMWrapper:
     

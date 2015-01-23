@@ -1,6 +1,6 @@
 // Note: this file was automatically generated using the
 // CoordinateFrame.generateLCMType() method.
-package abb;
+package abblcm;
 struct abb_irb140pos
 {
   int64_t timestamp;

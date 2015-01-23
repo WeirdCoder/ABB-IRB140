@@ -7,16 +7,11 @@ import cStringIO as StringIO
 import struct
 
 class abb_irb140pos(object):
-    __slots__ = ["timestamp", "Joint1", "Joint2", "Joint3", "Joint4", "Joint5", "Joint6"]
+    __slots__ = ["timestamp", "Joints"]
 
     def __init__(self):
         self.timestamp = 0
-        self.Joint1 = 0.0
-        self.Joint2 = 0.0
-        self.Joint3 = 0.0
-        self.Joint4 = 0.0
-        self.Joint5 = 0.0
-        self.Joint6 = 0.0
+        self.Joints = [ 0.0 for dim0 in range(6) ]
 
     def encode(self):
         buf = StringIO.StringIO()
@@ -25,7 +20,8 @@ class abb_irb140pos(object):
         return buf.getvalue()
 
     def _encode_one(self, buf):
-        buf.write(struct.pack(">qdddddd", self.timestamp, self.Joint1, self.Joint2, self.Joint3, self.Joint4, self.Joint5, self.Joint6))
+        buf.write(struct.pack(">q", self.timestamp))
+        buf.write(struct.pack('>6d', *self.Joints[:6]))
 
     def decode(data):
         if hasattr(data, 'read'):
@@ -39,14 +35,15 @@ class abb_irb140pos(object):
 
     def _decode_one(buf):
         self = abb_irb140pos()
-        self.timestamp, self.Joint1, self.Joint2, self.Joint3, self.Joint4, self.Joint5, self.Joint6 = struct.unpack(">qdddddd", buf.read(56))
+        self.timestamp = struct.unpack(">q", buf.read(8))[0]
+        self.Joints = struct.unpack('>6d', buf.read(48))
         return self
     _decode_one = staticmethod(_decode_one)
 
     _hash = None
     def _get_hash_recursive(parents):
         if abb_irb140pos in parents: return 0
-        tmphash = (0x4374c051f0450483) & 0xffffffffffffffff
+        tmphash = (0x650315ff211f3e2d) & 0xffffffffffffffff
         tmphash  = (((tmphash<<1)&0xffffffffffffffff)  + (tmphash>>63)) & 0xffffffffffffffff
         return tmphash
     _get_hash_recursive = staticmethod(_get_hash_recursive)
