@@ -1,0 +1,8 @@
+package abblcm;
+struct abb_irb140state
+{
+  int64_t timestamp;
+
+  abb_irb140joints joints;
+  abb_irb140cartesian cartesian;
+}

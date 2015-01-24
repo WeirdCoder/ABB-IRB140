@@ -12,18 +12,21 @@ import abb
 from ctypes import *
 import threading 
 #Import LCM Messages
-from lcmtypes import abb_irb140pos
-
-
-
+from lcmtypes import *
 
 #Message Conversion
-def convertLCM_Matlab(x):
-    msg = abb_irb140pos()
+def convertABBstate(joint_pos,joint_vel,cartesian):
+    msg = abb_irb140state()
     msg.timestamp =  time.time()
-    
-    msg.Joints = x
-
+   
+    msg.joints = abb_irb140joints()
+    msg.cartesian = abb_irb140cartesian()
+    msg.joints.timestamp = msg.timestamp
+    msg.cartesian.timestamp = msg.timestamp
+    msg.joints.pos = joint_pos
+    msg.joints.vel = joint_vel
+    msg.cartesian.pos = cartesian[0]
+    msg.cartesian.quat = cartesian[1]
     return msg
 
 def convertACH_Command(msg):
@@ -37,15 +40,16 @@ class abbIRB140LCMWrapper:
         self.subscription = self.lc.subscribe("IRB140Input",self.command_handler)
         
     def command_handler(self,channel,data):
-        msg = abb_irb140pos.decode(data)
-        jointCommand = convertACH_Command(msg)
+        msg = abb_irb140joints.decode(data)
+	jointCommand = msg.pos
         self.robot.setJoints(jointCommand)
 
     def broadcast_state(self):
         jointPos = self.robot.getJoints()
-        #ACH to LCM conversion
-        msg = convertLCM_Matlab(jointPos)
-        self.lc.publish("IRB140Pos", msg.encode())
+	cartesian = self.robot.getCartesian()
+        #ABB drive to LCM conversion
+	msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
+        self.lc.publish("IRB140STATE", msg.encode())
 
     def mainLoop(self,freq):
         pauseDelay = 1.0/freq #In Seconds.
