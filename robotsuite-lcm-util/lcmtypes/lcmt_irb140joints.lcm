@@ -1,0 +1,9 @@
+package abblcm;
+struct abb_irb140joints
+{
+  int64_t timestamp;
+
+  double pos[6];
+  double vel[6];
+}
+

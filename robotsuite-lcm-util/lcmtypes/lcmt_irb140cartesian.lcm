@@ -1,0 +1,9 @@
+package abblcm;
+struct abb_irb140cartesian
+{
+  int64_t timestamp;
+  
+  double pos[3];
+  double quat[4];
+}
+
