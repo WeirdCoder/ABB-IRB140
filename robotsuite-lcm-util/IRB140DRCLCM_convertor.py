@@ -24,7 +24,7 @@ class abbIRB140DRCLCMConvertor:
         #msgOut.twist_t TODO
 
         msgOut.num_joints = len(msgIn.joints.pos)
-        msgOut.joint_name = ["Joint" + i for i in range(len(msgOut.num_joints))]
+        msgOut.joint_name = ["Joint" + str(i) for i in range(len(msgOut.num_joints))]
         msgOut.joint_position = msgIn.joints.pos
         msgOut.joint_velocity = msgIn.joints.vel
         #msgOut.joint_effort TODO
