@@ -36,16 +36,16 @@ class abbIRB140LCMWrapper:
     
     def __init__(self):
         self.robot = abb.Robot(); #Robot Connection to openABB, input Robot's IP if needed.
-        self.joint_cmd_lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
-        self.joint_cmd_subscription = self.joint_cmd_lc.subscribe("IRB140Input",self.command_handler)
-        self.joint_plan_lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
-        self.joint_plan_subscription = self.joint_plan_lc.subscribe("IRB140JOINTPLAN",self.plan_handler)
+        self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
+        self.lc.subscribe("IRB140Input",self.command_handler)
+        self.lc.subscribe("IRB140JOINTPLAN",self.plan_handler)
         
 
     def plan_handler(self,channel,data):
+	print "receive plan"
         msg = abb_irb140joint_plan.decode(data)
         for i in range(msg.n_cmd_times):
-            self.robot.addJointPosBuffer(msg.joint_cmd[i].joints)
+            self.robot.addJointPosBuffer(msg.joint_cmd[i].pos)
         self.robot.executeJointPosBuffer()
         self.robot.clearJointPosBuffer()
         
@@ -59,7 +59,7 @@ class abbIRB140LCMWrapper:
 	cartesian = self.robot.getCartesian()
         #ABB drive to LCM conversion
 	msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
-        self.joint_cmd_lc.publish("IRB140STATE", msg.encode())
+        self.lc.publish("IRB140STATE", msg.encode())
 
     def mainLoop(self,freq):
         pauseDelay = 1.0/freq #In Seconds.
@@ -74,7 +74,7 @@ class abbIRB140LCMWrapper:
             t.start()
             while True:
                 time.sleep(pauseDelay)
-                self.joint_cmd_lc.handle()
+                self.lc.handle()
         except KeyboardInterrupt:
             pass
 
