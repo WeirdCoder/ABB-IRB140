@@ -12,7 +12,7 @@ import abb
 from ctypes import *
 import threading 
 #Import LCM Messages
-from lcmtypes import *
+from abblcm import *
 
 #Message Conversion
 def convertABBstate(joint_pos,joint_vel,cartesian):
