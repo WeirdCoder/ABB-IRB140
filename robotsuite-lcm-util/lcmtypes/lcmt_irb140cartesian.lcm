@@ -1,7 +1,7 @@
 package abblcm;
 struct abb_irb140cartesian
 {
-  int64_t timestamp;
+  int64_t utime;
   
   double pos[3];
   double quat[4];
