@@ -1,0 +1,8 @@
+package abblcm;
+struct abb_irb140joint_plan
+{
+  int64_t utime;
+
+  int64_t n_cmd_times;
+  abb_irb140joints joint_cmd[n_cmd_times];
+}
