@@ -39,6 +39,7 @@ class abbIRB140LCMWrapper:
         self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
         self.lc.subscribe("IRB140Input",self.command_handler)
         self.lc.subscribe("IRB140JOINTPLAN",self.plan_handler)
+        self.lc.subscribe("IRB140JOINTCMD",self,command_handler)
         
 
     def plan_handler(self,channel,data):
@@ -50,6 +51,7 @@ class abbIRB140LCMWrapper:
         self.robot.clearJointPosBuffer()
         
     def command_handler(self,channel,data):
+        print "receive command"
         msg = abb_irb140joints.decode(data)
 	jointCommand = msg.pos
         self.robot.setJoints(jointCommand)
