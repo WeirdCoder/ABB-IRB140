@@ -29,6 +29,13 @@ def convertABBstate(joint_pos,joint_vel,cartesian):
     msg.cartesian.quat = cartesian[1]
     return msg
 
+def convertSensordata(rawdata):
+   msg = abb_irb140ftsensor()
+   msg.utime = time.time()*1000000
+   msg.hand_force = rawdata[0:2]
+   msg.hand_torque = rawdata[3:6]
+   return msg
+
 def convertACH_Command(msg):
     return msg.Joints
 
@@ -58,10 +65,14 @@ class abbIRB140LCMWrapper:
 
     def broadcast_state(self):
         jointPos = self.robot.getJoints()
-	cartesian = self.robot.getCartesian()
+        cartesian = self.robot.getCartesian()
         #ABB drive to LCM conversion
-	msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
+        msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
         self.lc.publish("IRB140STATE", msg.encode())
+        sensordata = self.robot.getSensors2()
+        #Force Torque Sensor,  Not yet Tested -AC Feb 23
+        #msg = convertSensordata(sensordata)
+        #self.lc.publish("IRB140FTSENSOR", msg.encode())
 
     def mainLoop(self,freq):
         pauseDelay = 1.0/freq #In Seconds.

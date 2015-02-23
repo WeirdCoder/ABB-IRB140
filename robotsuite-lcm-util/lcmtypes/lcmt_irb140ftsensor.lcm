@@ -1,0 +1,8 @@
+package abblcm;
+struct abb_irb140ftsensor
+{
+    int64_t utime;
+    
+    float hand_force[3];
+    float hand_torque[3];
+}
