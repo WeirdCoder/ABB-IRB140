@@ -32,7 +32,7 @@ def convertABBstate(joint_pos,joint_vel,cartesian):
 def convertSensordata(rawdata):
    msg = abb_irb140ftsensor()
    msg.utime = time.time()*1000000
-   msg.hand_force = rawdata[0:2]
+   msg.hand_force = rawdata[0:3]
    msg.hand_torque = rawdata[3:6]
    return msg
 
@@ -42,11 +42,11 @@ def convertACH_Command(msg):
 class abbIRB140LCMWrapper:
     
     def __init__(self):
-        self.robot = abb.Robot(); #Robot Connection to openABB, input Robot's IP if needed.
+        self.robot = abb.Robot(verbose=True); #Robot Connection to openABB, input Robot's IP if needed.
         self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
         self.lc.subscribe("IRB140Input",self.command_handler)
         self.lc.subscribe("IRB140JOINTPLAN",self.plan_handler)
-        self.lc.subscribe("IRB140JOINTCMD",self,command_handler)
+        self.lc.subscribe("IRB140JOINTCMD",self.command_handler)
         
 
     def plan_handler(self,channel,data):
@@ -69,10 +69,10 @@ class abbIRB140LCMWrapper:
         #ABB drive to LCM conversion
         msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
         self.lc.publish("IRB140STATE", msg.encode())
-        sensordata = self.robot.getSensors2()
+        sensordata = self.robot.getForceSensors()
         #Force Torque Sensor,  Not yet Tested -AC Feb 23
-        #msg = convertSensordata(sensordata)
-        #self.lc.publish("IRB140FTSENSOR", msg.encode())
+        msg = convertSensordata(sensordata)
+        self.lc.publish("IRB140FTSENSOR", msg.encode())
 
     def mainLoop(self,freq):
         pauseDelay = 1.0/freq #In Seconds.
