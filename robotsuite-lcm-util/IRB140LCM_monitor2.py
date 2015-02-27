@@ -46,7 +46,7 @@ class abbIRB140LCMWrapper:
         self.lc = lcm.LCM("udpm://239.255.76.67:7667?ttl=1")
         self.lc.subscribe("IRB140Input",self.command_handler)
         self.lc.subscribe("IRB140JOINTPLAN",self.plan_handler)
-        self.lc.subscribe("IRB140JOINTCMD",self,command_handler)
+        self.lc.subscribe("IRB140JOINTCMD",self.command_handler)
         
 
     def plan_handler(self,channel,data):
@@ -69,7 +69,7 @@ class abbIRB140LCMWrapper:
         #ABB drive to LCM conversion
         msg = convertABBstate(jointPos,[0,0,0,0,0,0],cartesian)
         self.lc.publish("IRB140STATE", msg.encode())
-        sensordata = self.robot.getSensors2()
+        #sensordata = self.robot.getSensors2()
         #Force Torque Sensor,  Not yet Tested -AC Feb 23
         #msg = convertSensordata(sensordata)
         #self.lc.publish("IRB140FTSENSOR", msg.encode())
@@ -77,11 +77,10 @@ class abbIRB140LCMWrapper:
     def mainLoop(self,freq):
         pauseDelay = 1.0/freq #In Seconds.
         t = 1
-        def broadcastLoop():
-            while True:
-                self.broadcast_state()
-                self.lc.handle()
-                time.sleep(pauseDelay)
+	while True:
+            self.broadcast_state()
+            self.lc.handle()
+            time.sleep(pauseDelay)
 
 if __name__ == "__main__":
     wrapper = abbIRB140LCMWrapper()
