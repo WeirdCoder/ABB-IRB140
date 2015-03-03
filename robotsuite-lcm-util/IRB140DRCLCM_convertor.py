@@ -63,8 +63,8 @@ class abbIRB140DRCLCMConvertor:
         msgOut.pose.translation.z = 0.0
         msgOut.pose.rotation = drc.quaternion_t()
         # rotate by x axis by -90 degrees
-        msgOut.pose.rotation.w = -0.7071
-        msgOut.pose.rotation.x = 0.7071
+        msgOut.pose.rotation.w = 1.0 
+        msgOut.pose.rotation.x = 0.0
         msgOut.pose.rotation.y = 0.0
         msgOut.pose.rotation.z = 0.0
         msgOut.twist = drc.twist_t()
